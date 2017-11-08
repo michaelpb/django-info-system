@@ -1,0 +1,17 @@
+/* Sticky footer styles
+* -------------------------------------------------- */
+html, body {
+    min-height: 100%;
+}
+
+footer.sticky-footer {
+    height: 50px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+div.main-wrapper {
+    min-height: calc(100vh - 100px); /* includes header and footer */
+    box-sizing: border-box;
+}
+
