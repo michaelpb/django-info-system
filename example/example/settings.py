@@ -24,7 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'microblog',
+    'django_info_system',
+    'person',
+    'plist',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -1,84 +1,140 @@
-{% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>{% block title %}django-info-system{% endblock title %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+{% extends "base/empty.html" %}
+{% load i18n %}
 
-  {% block css %}
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
 
-  <!-- Your stuff: Third-party css libraries go here -->
+{% block title %}
+    {% if page_title %}
+        {{ page_title|capfirst }} -
+    {% endif %}
+{% endblock %}
 
-  {% endblock %}
-</head>
 
-<body>
+{% block body %}
+    {% block top %}
+    <div class="navbar navbar-fixed-top navbar-default">
+      <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <img src="{{ STATIC_URL }}core/images/new_logo_2_2x.png" alt="Open Lab" height="38"  />
+            </a>
+        </div>
+        <div class="navbar-collapse collapse">
+            {# Main nav #}
+            <ul class="nav navbar-nav main-nav">
+                <li {% block tab_planet %}{% endblock tab_planet %}><a href="{% if not user or not user.is_authenticated %}/{% else %}{% url "showcase" %}{% endif %}" class="tab-planet tip"  data-placement="bottom" title="Planet">
+                    <i class="ol-icon ol-planet"></i>
+                    <span class="icon-label">Planet</span>
+                </a></li>
+                <li {% block tab_projects %}{% endblock %}><a href="{% url "project_list" %}" class="tab-projects tip" title="Projects" data-placement="bottom">
+                    <i class="ol-icon ol-project"></i>
+                    <span class="icon-label">Projects</span>
+                </a></li>
+                <li {% block tab_people %}{% endblock %}><a href="{% url "team_list" %}" class="tab-people tip" title="People" data-placement="bottom">
+                    <i class="ol-icon ol-person"></i>
+                    <span class="icon-label">People</span>
+                </a></li>
+            </ul>
 
-<div class="m-b">
-  <nav class="navbar navbar-dark navbar-static-top bg-inverse">
-    <div class="container">
-      <a class="navbar-brand" href="/">django-info-system</a>
-      <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse"
-              data-target="#bs-navbar-collapse-1">
-        &#9776;
-      </button>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-        </ul>
+            {% block nav_user_menu %}
+                {# user tools #}
+                {% if not user.is_authenticated %}
+                    <div class="navbar-form navbar-right navbar-login hidden-print">
+                        {% include "accounts/snippets/login.html" %}
+                    </div>
+                {% else %}
+                    <ul class="nav navbar-nav navbar-right">
+                        {% include "accounts/snippets/user_menu.html" %}
+                    </ul>
+                {% endif %}
+            {% endblock nav_user_menu %}
+            </div>
+        </div><!--/.navbar-collapse -->
       </div>
     </div>
-  </nav>
-</div>
+    {% endblock %}
 
-<div class="container">
 
-    <h1>MICROBLOG - Actable example</h1>
-  {% if messages %}
-  {% for message in messages %}
-  <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-  {% endfor %}
-  {% endif %}
+    <div class="main-wrapper">
+        {% block middle %}
+            {% block header %}
+                <div class="jumbotitle {% block header_class %}{% endblock %}" {% block header_attr %}{% endblock %}>
+                    <div class="header-top">
+                        {% block breadcrumbs %}
+                            {% if request.breadcrumbs and request.breadcrumbs|length > 1 %}
+                                <div class="container">
+                                    <ol class="breadcrumb">
+                                        {% for breadcrumb in request.breadcrumbs %}
+                                            {% if forloop.last %}
+                                                <li class="active">{{ breadcrumb.name }}</li>
+                                            {% else %}
+                                                <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ol>
+                                </div>
+                            {% endif %}
+                        {% endblock breadcrumbs %}
+                        <div id="messages">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="container">
+                                        <div class="alert alert-info alert-{{ message.tags }}">
+                                            <a class="btn btn-large btn-warning pull-right" data-dismiss="alert">&times;</a>
+                                            <p><big>{{ message }}</big></p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
 
-  {% block content %}
-  <div class="row m-t-2">
-    <p>Use this document as a way to quick start any new project.</p>
-    <p>The current template is loaded from
-      <code>django-info-system/example/templates/base.html</code>. </p>
-    <p>Whenever you overwrite the contents of <code>django-info-system/example/django-info-system/urls.py</code> with your
-      own content, you should see it here.</p>
-  </div>
-  {% endblock content %}
 
-</div> <!-- /container -->
+                    <div class="container header-content">
+                        {% block header_content %}
+                        {% endblock %}
+                    </div>
 
-{% block modal %}{% endblock modal %}
+                    <div class="header-bottom">
+                        {% block header_bottom %}
+                        {% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
 
-<!-- Le javascript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-{% block javascript %}
-<!-- Latest JQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+                {% block content %}
+                {% endblock content %}
+        {% endblock middle %}
+    </div>
 
-<!-- Tether - a requirement for Bootstrap tooltips -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"></script>
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
-
-<!-- Your stuff: Third-party javascript libraries go here -->
-
-{% endblock javascript %}
-</body>
-</html>
+    {% block footer %}
+        <footer class="sticky-footer">
+            Open Lab
+            <!--[if lte IE 8]><span style="filter: FlipH; -ms-filter: "FlipH"; display: inline-block;"><![endif]-->
+            <span style="-moz-transform: scaleX(-1); -o-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); display: inline-block;">
+            &copy;</span>
+            <!--[if lte IE 8]></span><![endif]-->
+            {% now "Y" %}
+            -
+            <a href="{% url "core_site_credits" %}">{% trans "Credits" %}</a> -
+            <a href="/contact/">{% trans "Contact" %}</a>
+            {% comment %}
+                <div class="col-md-2">
+                    <p><a 
+                            class="btn btn-default btn-xs tip"
+                            href="javascript:void(0);"
+                            onClick="window.open('http://webchat.freenode.net/?nick={% firstof user.username 'visitor...' %}&channels=openlab-dev&uio=Mj10cnVlJjM9ZmFsc2UmMTA9dHJ1ZSYxMT0yMjYmMTM9ZmFsc2U9b','Open Lab Dev Chat','height=400,width=450');"
+                            title="Ran into a bug? Not sure what to do? Click here to chat with us in the chat channel! (freenode#openlab-dev)"
+                        >
+                        <i class="icon-comments"></i> &nbsp; Open Lab Dev Chat &nbsp;<i class="icon-external-link"></i>
+                    </a></p>
+                </div>
+            {% endcomment %}
+        </footer> <!-- /container -->
+    {% endblock footer %}
+{% endblock body %}
 

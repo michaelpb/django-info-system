@@ -1,0 +1,13 @@
+{% extends "team/view/base.html" %}
+{% load i18n %}
+
+
+{% block teamtab_about %}class="active"{% endblock %}
+
+{% block tabcontent %}
+<div class="container">
+    <div class="row">
+        {% include "project/snippets/project_list.html" with projects=projects %}
+    </div>
+</div>
+{% endblock %}

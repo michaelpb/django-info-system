@@ -6,10 +6,10 @@ breadcrumbs on every page, properly working tabs, implied permission checks,
 etc.
 
 The view class hierarchy mirrors the model class hierarchy. Main objects in
-Open Lab (Project, Team, and eventually Service) all descend from "InfoBase".
-Likewise, their views descend from the Info view.  This allows for sharing code
-to do things like manage users in a project and manage users in a team,
-changing properties / forms, uploading media, etc
+Open Lab (Project, Team, and eventually Service) all descend from
+"InfoBase".  Likewise, their views descend from the Info view.  This allows
+for sharing code to do things like manage users in a project and manage
+users in a team, changing properties / forms, uploading media, etc
 
 Examples:
 
@@ -26,36 +26,37 @@ Wiki
  v
 ProjectWiki
 """
+# python
+import collections
 
 # django
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
-from django.views.generic.base import View
-from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
+from django.conf.urls import url
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe, mark_for_escaping
+from django.utils.translation import ugettext as _
 from django.middleware.csrf import get_token
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.views.generic.base import View
 
 # 3rd party
-from cities_light.models import Country, Region, City, to_search
-from actstream.actions import is_following, follow, unfollow
-from actstream import registry
+#from cities_light.models import Country, Region, City, to_search
+#from actstream.actions import is_following, follow, unfollow
+#from actstream import registry
 
 # 1st party
-from openlab.gallery.models import  Photo
-from openlab.accounts.forms import make_manage_user_forms_context,\
-                    make_manage_user_access_forms_context
+#from openlab.accounts.forms import make_manage_user_forms_context,\
+#                    make_manage_user_access_forms_context
 
 # local
-from .generic_view_exceptions import *
-import collections
+from django_info_system.exceptions import *
 
 
 def _one_of(val, *options):
@@ -63,7 +64,6 @@ def _one_of(val, *options):
     return val or options[0]
 
 
-from django.conf.urls import url
 def url_helper(regexp, view, url_name_suffix=''):
     """
     Quick helper function that constructs a URL name, such as:
@@ -175,10 +175,6 @@ class ViewInfo(Info):
         # sanity check
         #assert self.action in self.actions
 
-        if self.action == 'forking':
-            # Actually forking request
-            return self.handle_forking(request)
-
         return self.get(request, *a, **k)
 
     def get_object(self, request):
@@ -196,6 +192,7 @@ class ViewInfo(Info):
         pass
 
     def handle_following(self, user, obj):
+        return  # XXX ... replace with generic "Star"-ing..?
         if not user.is_authenticated():
             return False
 
@@ -210,17 +207,6 @@ class ViewInfo(Info):
             following = not following
 
         return following
-
-    def handle_forking(self, request):
-        if not request.user.is_authenticated():
-            # shouldn't happen
-            return False
-
-        obj = self.get_object(request)
-        args = self.get_forking_args(request)
-        new_obj = obj.fork(*args)
-        return redirect(new_obj.get_absolute_url())
-
 
     def get_context_data(self, request):
         # Get the object that we're viewing
@@ -339,17 +325,17 @@ class ListInfo(Info):
         if 'q' in request.GET:
             search['search_terms'] = str(request.GET['q']).split()
 
-        if 'country' in self.kwargs:
-            # country codes are all uppercase in DB, lowercase in URL
-            country_code = str(self.kwargs['country']).upper()
-            country  = Country.objects.filter(code2=country_code)
-            search['country'] = country and country[0]
+        #if 'country' in self.kwargs:
+        #    # country codes are all uppercase in DB, lowercase in URL
+        #    country_code = str(self.kwargs['country']).upper()
+        #    country  = Country.objects.filter(code2=country_code)
+        #    search['country'] = country and country[0]
 
         #if request.GET.get('category'):
         #    search['category'] = str(request.GET['category'])
 
         # Generate base queryset
-        queryset = self.model.objects.all().select_related('city')
+        queryset = self.model.objects.all()
 
         #  Apply search term affect to refine queryset
         if 'tag' in search:
@@ -357,14 +343,14 @@ class ListInfo(Info):
             #tag = self.model.clean_tag(search['tag'])
             queryset = queryset.filter(tags__name=tag)
 
-        if 'country' in search:
-            queryset = queryset.filter(country=search['country'])
+        #if 'country' in search:
+        #    queryset = queryset.filter(country=search['country'])
 
-        if 'region' in search:
-            queryset = queryset.filter(region=search['region'])
+        #if 'region' in search:
+        #    queryset = queryset.filter(region=search['region'])
 
-        if 'city' in search:
-            queryset = queryset.filter(city=search['city'])
+        #if 'city' in search:
+        #    queryset = queryset.filter(city=search['city'])
 
         if 'search_terms' in search:
             # Really simple, ultra slow search system, until we set up
@@ -589,6 +575,7 @@ class ManageMembersInfo(ManageInfo):
     def get_more_context(self, request, obj):
         # TODO needs heavy refactor with make_manage_user_forms_context
         # Depending on different fields, construct the stuff, ya' dig?
+        return # XXX FIX
         c = {}
         if 'user_access' in self.member_field_names:
             info = self.member_access['user_access']

@@ -2,15 +2,12 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
-# 1st party
-from openlab.discussion.models import Thread
-
 class UpdateMixin(object):
     def update_fields(self, **kwds):
         for key, val in list(kwds.items()):
             setattr(self, key, val)
 
-class InfoBaseModel(UpdateMixin):
+class InfoBaseModel(models.Model, UpdateMixin):
     # Example use of placeholder:
     # PLACEHOLDER_IMAGE_URL = settings.STATIC_URL + 'core/images/placeholder.png'
 
@@ -18,20 +15,19 @@ class InfoBaseModel(UpdateMixin):
         abstract = True
         get_latest_by = "updated_date"
 
-    title = models.CharField(
-            verbose_name=_("Name"),
-            max_length=255)
-
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
-    # tags = TaggableManager(
-    #        help_text=_("Tags for the project"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                            null=True,
+                            blank=True,
+                            verbose_name='Creator')
+    name = models.CharField(blank=True, max_length=255)
 
-    summary = models.CharField(
-            max_length=140,
-            verbose_name=_("Summary"),
-            help_text=_("Describe in in 140 characters or less. (No paragraphs.)"))
+    description = models.TextField(
+            default="", blank=True,
+            help_text=_("Notes or description"),
+            verbose_name=_("Description"))
 
     def editable_by(self, user):
         if not user.is_authenticated():
