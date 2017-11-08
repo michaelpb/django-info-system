@@ -26,3 +26,8 @@ python manage.py makemigrations person plist
 echo "--- Syncing DB..."
 python manage.py migrate
 
+echo "--- Repopulating test data..."
+python manage.py generate_test_data
+
+
+

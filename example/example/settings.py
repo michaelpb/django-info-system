@@ -112,3 +112,10 @@ STATIC_URL = '/static/'
 ###########################
 ###########################
 
+INFO_SYSTEM_TEST_FACTORIES = [
+    'person.tests.create_person',
+]
+
+MIDDLEWARE_CLASSES += [
+    'django_info_system.middleware.BreadcrumbsMiddleware',
+]

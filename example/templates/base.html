@@ -26,31 +26,10 @@
         <div class="navbar-collapse collapse">
             {# Main nav #}
             <ul class="nav navbar-nav main-nav">
-                <li {% block tab_planet %}{% endblock tab_planet %}><a href="{% if not user or not user.is_authenticated %}/{% else %}{% url "showcase" %}{% endif %}" class="tab-planet tip"  data-placement="bottom" title="Planet">
-                    <i class="ol-icon ol-planet"></i>
-                    <span class="icon-label">Planet</span>
-                </a></li>
-                <li {% block tab_projects %}{% endblock %}><a href="{% url "project_list" %}" class="tab-projects tip" title="Projects" data-placement="bottom">
-                    <i class="ol-icon ol-project"></i>
-                    <span class="icon-label">Projects</span>
-                </a></li>
-                <li {% block tab_people %}{% endblock %}><a href="{% url "team_list" %}" class="tab-people tip" title="People" data-placement="bottom">
-                    <i class="ol-icon ol-person"></i>
-                    <span class="icon-label">People</span>
-                </a></li>
             </ul>
 
             {% block nav_user_menu %}
                 {# user tools #}
-                {% if not user.is_authenticated %}
-                    <div class="navbar-form navbar-right navbar-login hidden-print">
-                        {% include "accounts/snippets/login.html" %}
-                    </div>
-                {% else %}
-                    <ul class="nav navbar-nav navbar-right">
-                        {% include "accounts/snippets/user_menu.html" %}
-                    </ul>
-                {% endif %}
             {% endblock nav_user_menu %}
             </div>
         </div><!--/.navbar-collapse -->

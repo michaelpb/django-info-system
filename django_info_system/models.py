@@ -39,7 +39,7 @@ class InfoBaseModel(models.Model, UpdateMixin):
         return bool(self.members.filter(id=user.id))
 
     def __str__(self):
-        return self.title
+        return self.name
 
     def get_thumb_url(self):
         return self.PLACEHOLDER_IMAGE_URL

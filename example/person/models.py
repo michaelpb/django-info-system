@@ -10,6 +10,8 @@ class Person(InfoBaseModel):
         related_name='associated_person',
         help_text=_("Account associated with profile"),
         verbose_name=_("Account"),
+        null=True,
+        blank=True,
     )
 
     email = models.EmailField(null=True, blank=True)

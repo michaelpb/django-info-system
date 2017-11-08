@@ -1,5 +1,5 @@
-{% extends "team/base.html" %}
-{% load openlab_tags %}
+{% extends "person/base.html" %}
+{% load django_info_system_tags %}
 
 {% block header_class %}compact{% endblock %}
 
@@ -27,13 +27,13 @@
     <div class="row">
         <div class="col-md-12">
             <ul class="nav nav-tabs">
-                <li {{ tab.active }}><a href="{% url "team_list" %}">Active</a></li>
-                <li {{ tab.all }}><a href="{% url "team_list_tab" tab="all" %}">All</a></li>
+                <li {{ tab.active }}><a href="{% url "person_list" %}">Active</a></li>
+                <li {{ tab.all }}><a href="{% url "person_list_tab" tab="all" %}">All</a></li>
                 {% comment %}
-                <li {{ tab.top }}><a href="{% url "team_list" %}">Top</a></li>
-                <li {{ tab.new }}><a href="{% url "team_list" %}">New</a></li>
+                <li {{ tab.top }}><a href="{% url "person_list" %}">Top</a></li>
+                <li {{ tab.new }}><a href="{% url "person_list" %}">New</a></li>
                 {% if user.is_authenticated %}
-                    <li class="pull-right {{ tab.new.class }}"><a href="{% url "team_list" %}">Search</a></li>
+                    <li class="pull-right {{ tab.new.class }}"><a href="{% url "person_list" %}">Search</a></li>
                 {% endif %}
                 {% endcomment %}
             </ul>

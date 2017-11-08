@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load compress %}
 
 {# Disabled until we upgrade s3uploader #}
 {# {% load s3uploader %} #}
@@ -34,7 +33,6 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:400|Pathway+Gothic+One'
             rel='stylesheet' type='text/css' />
 
-    {% compress css %}
         <!-- Bootstrap core CSS -->
         <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}core/css/magic-bootstrap.css" rel="stylesheet">
@@ -81,7 +79,6 @@
         <link href="{{ STATIC_URL }}core/css/stickyfooter.css" rel="stylesheet">
 
         <link href="{{ STATIC_URL }}olmarkdown/css/olmarkdown.css" rel="stylesheet">
-    {% endcompress %}
   </head>
 
   <body {% block bodyattributes %}{% endblock %}>
@@ -94,7 +91,6 @@
     {% endblock body %}
 
     {% block endjavascript %}
-        {% compress js %}
             <!-- jquery ui (core & interactions only) -->
             <script src="{{ STATIC_URL }}jquery/js/jquery-ui-1.10.4.custom.js"></script>
 
@@ -120,7 +116,6 @@
             <script src="{{ STATIC_URL }}core/js/olmarkdown.js"></script>
             <script src="{{ STATIC_URL }}core/js/gallery.js"></script>
             <script src="{{ STATIC_URL }}core/js/newrelease.js"></script>
-        {% endcompress %}
     {% endblock %}
     {% block more_js %}
     {% endblock %}
