@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
 # 1st party
-from django_info_system.generic_views import *
+from django_info_system.generic_views import ListInfo
 
 # local
 from .models import Person

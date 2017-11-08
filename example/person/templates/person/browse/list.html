@@ -47,25 +47,20 @@
 {% include "snippets/next_previous.html" %}
 <div class="container">
     <div class="row">
-        {% for team in teams %}
+        {% for person in persons %}
         <div class="col-md-6">
             <div class="col-md-4">
-                <br />
-                <a href="{{ team.get_absolute_url }}">
-                    <img class="img-rounded info-thumb" src="{{ team.get_thumb_url }}" />
+                <a href="{{ person.get_absolute_url }}">
+                    <img class="img-rounded info-thumb" src="" />
                 </a>
             </div>
             <div class="col-md-8">
-                <a href="{{ team.get_absolute_url }}"><h3>{{ team.title|truncatechars:"30" }}</h3></a>
-                <p class="text-muted">{{ team.summary }}</p>
-                {% for user in team.members.all %}
-                    <a href="{% url "user_profile" user.username %}">{{ user.profile.desired_name }}</a>
-                {% empty %}
-                {% endfor %}
+                <a href="{{ person.get_absolute_url }}"><h3>{{ person.name|truncatechars:"80" }}</h3></a>
+                <p class="text-muted">{{ person.summary }}</p>
             </div>
         </div>
         {% empty %}
-            <p><em>No teams found!</em></p>
+            <p><em>No person found!</em></p>
         {% endfor %}
     </div>
 </div>

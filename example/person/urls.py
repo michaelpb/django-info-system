@@ -6,4 +6,6 @@ from person import views
 
 urlpatterns = [
     u(r'^$', views.PersonList),
+    u(r'^(?P<tab>[a-z][a-z][a-z]+)$', views.PersonList,
+        url_name_suffix="_tab"),
 ]
