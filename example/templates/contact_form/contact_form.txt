@@ -1,9 +1,0 @@
-Open Lab contact
-
-name: {{ name }}
-
-email: {{ email }}
-
-body:
-{{ body }}
-
