@@ -1,0 +1,11 @@
+<div class="{% if wider %}col-md-2{% else %}col-md-4{% endif %}">
+    <a href="{{ obj.get_absolute_url }}">
+        <img class="img-rounded info-thumb top-thumb" src="{{ obj.get_thumb_url }}" />
+    </a>
+</div>
+
+<div class="{% if wider %}col-md-10{% else %}col-md-8{% endif %}">
+    <a href="{{ obj.get_absolute_url }}"><h3>{{ obj|truncatechars:"120" }}</h3></a>
+    <p class="text-muted">{{ obj.summary }}</p>
+    <p class="text-muted">Phone: {{ obj.phone }}</p>
+</div>
