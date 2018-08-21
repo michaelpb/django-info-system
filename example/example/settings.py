@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'actable',
     'django_info_system',
     'person',
     'plist',
@@ -119,4 +120,19 @@ INFO_SYSTEM_TEST_FACTORIES = [
 
 MIDDLEWARE_CLASSES += [
     'django_info_system.middleware.BreadcrumbsMiddleware',
+    'django_info_system.middleware.RequireLoginMiddleware',
 ]
+
+ACTABLE_MODELS = [
+    'person.Person',
+    'plist.Plist',
+]
+
+LOGIN_REQUIRED_URLS = (
+    r'.*$',
+)
+
+LOGIN_REQUIRED_URLS_EXCEPTIONS = (
+    r'/admin/.*$',
+)
+

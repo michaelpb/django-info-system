@@ -1,13 +1,11 @@
-{% extends "team/view/base.html" %}
+{% extends "person/view/base.html" %}
 {% load i18n %}
 
 
-{% block teamtab_about %}class="active"{% endblock %}
+{% block persontab_about %}class="active"{% endblock %}
 
 {% block tabcontent %}
-<div class="container">
-    <div class="row">
-        {% include "project/snippets/project_list.html" with projects=projects %}
-    </div>
-</div>
+
+{% include "django_info_system/snippets/activity_stream.html" %}
+
 {% endblock %}

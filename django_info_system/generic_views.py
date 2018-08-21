@@ -1,4 +1,4 @@
-"""
+'''
 View class hierarchy is based here.
 
 These classes are the root of a massive class hierarchy that gives things like
@@ -7,7 +7,7 @@ etc.
 
 The view class hierarchy mirrors the model class hierarchy. Main objects in
 Open Lab (Project, Team, and eventually Service) all descend from
-"InfoBase".  Likewise, their views descend from the Info view.  This allows
+'InfoBase'.  Likewise, their views descend from the Info view.  This allows
 for sharing code to do things like manage users in a project and manage
 users in a team, changing properties / forms, uploading media, etc
 
@@ -25,7 +25,7 @@ Wiki
  |
  v
 ProjectWiki
-"""
+'''
 # python
 import collections
 
@@ -47,9 +47,7 @@ from django.contrib import messages
 from django.views.generic.base import View
 
 # 3rd party
-#from cities_light.models import Country, Region, City, to_search
-#from actstream.actions import is_following, follow, unfollow
-#from actstream import registry
+from actable.helpers import EventDictPaginator
 
 # 1st party
 #from openlab.accounts.forms import make_manage_user_forms_context,\
@@ -65,14 +63,21 @@ def _one_of(val, *options):
 
 
 def url_helper(regexp, view, url_name_suffix=''):
-    """
+    '''
     Quick helper function that constructs a URL name, such as:
         team_followers, team_members, etc
     Or, in the case of manage functions:
         team_manage_edit, team_manage_members
-    """
+    '''
     url_name = view.get_url_name() + url_name_suffix
     return url(regexp, view.as_view(), {}, url_name)
+
+def update_context_to_include_actable_stream(view, ctx, request):
+    obj = ctx['obj']
+    paginator = EventDictPaginator(obj, view.ACTIVITY_PAGE_LENGTH)
+    page_number = int(request.GET.get('page', 1))
+    ctx['activities_paginator'] = paginator
+    ctx['activities'] = paginator.page(page_number)
 
 
 class LoginRequiredMixin(object):
@@ -81,9 +86,9 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 class IsActive(object):
-    """
+    '''
     Helper class to include in context to render views properly
-    """
+    '''
     IS_ACTIVE_ATTR = 'class="active"'
     IS_ACTIVE_CLASS = 'active'
     def __init__(self, active, on_match=None):
@@ -99,9 +104,9 @@ class IsActive(object):
 
 
 class Info(View):
-    """
+    '''
     For InfoBase objects
-    """
+    '''
     parent_view = None
 
     def get(self, request, *args, **kwargs):
@@ -126,15 +131,18 @@ class Info(View):
 
         lst.reverse()
 
-        for a in lst:
-            request.breadcrumbs(*a)
+        for name, url in lst:
+            request.breadcrumbs.append(name, url)
 
         # Add breadcrumb for current page
-        bc = self.breadcrumb(ctx) if isinstance(self.breadcrumb, collections.Callable) else self.breadcrumb
-        request.breadcrumbs(bc, request.path)
+        if isinstance(self.breadcrumb, collections.Callable):
+            name = self.breadcrumb(ctx)
+        else:
+            name = self.breadcrumb
+        request.breadcrumbs.append(name, request.path)
 
         # add self to page title
-        ctx['page_title'] = bc
+        ctx['page_title'] = name
 
 
     def get_context_data(self, request):
@@ -152,7 +160,7 @@ class Info(View):
 
     @classmethod
     def get_url_name(cls):
-        s = "%s_%s" % (cls.noun, cls.template_basename)
+        s = '%s_%s' % (cls.noun, cls.template_basename)
         return s
 
     @classmethod
@@ -165,7 +173,7 @@ class Info(View):
 # Project details views
 
 class ViewInfo(Info):
-    template_interfix = "view/"
+    template_interfix = 'view/'
     action = None
     can_edit = None
     varname = None
@@ -174,13 +182,12 @@ class ViewInfo(Info):
         self.action = request.POST.get('action')
         # sanity check
         #assert self.action in self.actions
-
         return self.get(request, *a, **k)
 
     def get_object(self, request):
-        """
+        '''
         Gets the object in question.
-        """
+        '''
         field = self.kwargs.get(self.field)
         k = { self.field: field }
         obj = get_object_or_404(self.model, **k)
@@ -192,7 +199,7 @@ class ViewInfo(Info):
         pass
 
     def handle_following(self, user, obj):
-        return  # XXX ... replace with generic "Star"-ing..?
+        return  # XXX ... replace with generic 'Star'-ing..?
         if not user.is_authenticated():
             return False
 
@@ -259,31 +266,45 @@ class ViewInfo(Info):
 
 
 class ViewOverviewInfo(ViewInfo):
-    template_basename = "about"
+    template_basename = 'about'
+
+    ACTIVITY_PAGE_LENGTH = 100
+
+    def get_context_data(self, request):
+        c = super().get_context_data(request)
+        update_context_to_include_actable_stream(self, c, request)
+        return c
 
     @classmethod
     def get_url_name(cls):
-        """
+        '''
         For the initial view, just go with bare noun
-        """
+        '''
         return cls.noun
 
     @classmethod
     def breadcrumb(cls, ctx):
-        """
+        '''
         For breadcrumbs, use the string representation of the current object.
-        """
+        '''
         return str(ctx.get('obj'))
 
 
 class ViewActivityInfo(ViewInfo):
-    template_basename = "activity"
+    template_basename = 'activity'
     breadcrumb = _('Activity')
+
+    ACTIVITY_PAGE_LENGTH = 100
+
+    def get_context_data(self, request):
+        c = super().get_context_data(request)
+        update_context_to_include_actable_stream(self, c)
+        return c
 
 
 class ViewMembersInfo(ViewInfo):
     # For Team, its pageable list of members. For 
-    template_basename = "members"
+    template_basename = 'members'
     breadcrumb = _('Members')
 
     def get_more_context(self, request, obj):
@@ -306,8 +327,8 @@ class ViewMembersInfo(ViewInfo):
 # Browsing interface
 
 class ListInfo(Info):
-    template_interfix = "browse/"
-    template_basename = "list"
+    template_interfix = 'browse/'
+    template_basename = 'list'
     PAGE_SIZE = 40
 
     def get_context_data(self, request, arg=1):
@@ -382,7 +403,7 @@ class ListInfo(Info):
         objects = list(page.object_list)
         #########################################
 
-        nouns = "%ss" % self.noun
+        nouns = '%ss' % self.noun
         c = {
                 'queryset': queryset,
                 'list': objects,
@@ -409,10 +430,10 @@ class FormBaseMixin(object):
         return self.get_object(request)
 
     def post(self, request, *a, **k):
-        """
+        '''
         Handle form submission creating a new InfoBase object, or editing an
         existing one
-        """
+        '''
         instance = self.get_object(request)
 
         # Mixin in any prefilled fields (used by PreCreate UX path)
@@ -474,7 +495,7 @@ class FormBaseMixin(object):
             form = self.form(request.POST, instance=instance, initial=initial)
         else:
             form = self.form(instance=instance, initial=initial)
-        form.helper.form_id = "%s_edit" % self.noun
+        form.helper.form_id = '%s_edit' % self.noun
         form.helper.form_action = ''
         return form
 
@@ -489,8 +510,8 @@ class PreCreateInfo(Info, LoginRequiredMixin):
 
     (Eventually may allow Team import from GitHub, also)
     '''
-    template_interfix = "manage/"
-    template_basename = "precreate"
+    template_interfix = 'manage/'
+    template_basename = 'precreate'
     breadcrumb = _('Create')
 
     def get_context_data(self, request):
@@ -513,19 +534,19 @@ class PreCreateInfo(Info, LoginRequiredMixin):
             return self.get(request)
         url = reverse(self.redirect_view_name, args=args, kwargs=kwargs)
         querystring = form.get_querystring()
-        return redirect("%s?%s" % (url, querystring))
+        return redirect('%s?%s' % (url, querystring))
 
 
 class CreateInfo(Info, LoginRequiredMixin, FormBaseMixin):
-    template_interfix = "manage/"
-    template_basename = "create"
+    template_interfix = 'manage/'
+    template_basename = 'create'
     breadcrumb = _('Create')
     CREATION_MESSAGE = ''
 
     def get_object(self, request):
-        """
+        '''
         Returns None since nothing has been created yet.
-        """
+        '''
         return None
 
     def get_context_data(self, request):
@@ -536,22 +557,22 @@ class CreateInfo(Info, LoginRequiredMixin, FormBaseMixin):
 
 
 class ManageInfo(ViewInfo, LoginRequiredMixin):
-    template_interfix = "manage/"
+    template_interfix = 'manage/'
     DELETION_MESSAGE = ''
     UPDATED_MESSAGE = ''
 
     def check_permission(self, request, ctx):
         if not ctx.get('can_edit'):
-            raise PermissionDenied(_("You don't have permission to manage this."))
+            raise PermissionDenied(_('You don\'t have permission to manage this.'))
 
     @classmethod
     def get_url_name(cls):
-        s = "%s_manage_%s" % (cls.noun, cls.template_basename)
+        s = '%s_manage_%s' % (cls.noun, cls.template_basename)
         return s
 
 #class ManageEditInfo(ManageInfo, FormBaseMixin):
 class ManageEditInfo(FormBaseMixin, ManageInfo):
-    template_basename = "edit"
+    template_basename = 'edit'
     breadcrumb = _('Manage details')
     extra_form = None
 
@@ -566,7 +587,7 @@ class ManageEditInfo(FormBaseMixin, ManageInfo):
 
 
 class ManageMembersInfo(ManageInfo):
-    template_basename = "members"
+    template_basename = 'members'
     breadcrumb = _('Manage')
 
     def post(self, *a, **k):
@@ -592,16 +613,16 @@ class ManageMembersInfo(ManageInfo):
 
 
 class ManageUploadBaseInfo(ManageInfo):
-    """
+    '''
     Can be subclassed for either Gallery or Files.
-    """
+    '''
     PAGE_SIZE = 30
 
     def get_more_context(self, request, obj):
         # Add sortability (disabled for now)
         #ordering = request.GET.get('ordering', '')
-        #ordering = _one_of(ordering, "upload_date", "title")
-        #ordering = _one_of(ordering, "upload_date", "title")
+        #ordering = _one_of(ordering, 'upload_date', 'title')
+        #ordering = _one_of(ordering, 'upload_date', 'title')
 
         # And pagination
         page_number = request.GET.get('page', request.GET.get('page', 1))
@@ -628,12 +649,12 @@ class ManageUploadBaseInfo(ManageInfo):
 
 
 class ManageEditUploadBaseInfo(ManageInfo):
-    """
+    '''
     Superclass useful to create Media and File management views.
 
     Somewhat messy, since it was copied from a function based view, but it
     works.
-    """
+    '''
 
     def post(self, *a, **k):
         return self.get(*a, **k)
@@ -659,7 +680,7 @@ class ManageEditUploadBaseInfo(ManageInfo):
             # Delete all that match query, and return
             files = self.exclude_undeletable(obj, files)
             number = files.count()
-            if hasattr(files, "deleted"):
+            if hasattr(files, 'deleted'):
                 files.update(deleted=True)
             else:
                 # Perform hard delete

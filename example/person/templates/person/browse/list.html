@@ -49,15 +49,7 @@
     <div class="row">
         {% for person in persons %}
         <div class="col-md-6">
-            <div class="col-md-4">
-                <a href="{{ person.get_absolute_url }}">
-                    <img class="img-rounded info-thumb" src="" />
-                </a>
-            </div>
-            <div class="col-md-8">
-                <a href="{{ person.get_absolute_url }}"><h3>{{ person.name|truncatechars:"80" }}</h3></a>
-                <p class="text-muted">{{ person.summary }}</p>
-            </div>
+            {% include "snippets/infocard.html" with obj=person %}
         </div>
         {% empty %}
             <p><em>No person found!</em></p>

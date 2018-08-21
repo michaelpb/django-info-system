@@ -1,8 +1,8 @@
-{% extends "team/base.html" %}
+{% extends "person/base.html" %}
 {% load i18n %}
 
 {% block header_content %}
-    {% include "core/snippets/infobase_page_header.html" with show_location_view_name="person_list" %}
+    {% include "snippets/infocard.html" with wider="true" %}
 {% endblock %}
 
 {% block header_bottom %}
@@ -10,18 +10,14 @@
     <div class="row">
         <div class="col-md-12">
             <ul class="nav nav-tabs">
-                <li {{ tab.about }}><a href="{% url "team" team.slug %}">Projects</a></li>
+                <li {{ tab.about }}><a href="{% url "person" person.id %}">History</a></li>
                 {% comment %}
-                    <li {{ tab.activity }}><a href="{% url "team_activity" team.slug %}">Activity</a></li>
+                    <li {{ tab.activity }}><a href="{% url "person_activity" person.slug %}">Activity</a></li>
+                <li {{ tab.members }}><a href="{% url "person_members" person.slug %}">Members</a></li>
+                    <li {{ tab.gallery }}{{ tab.photo }}><a href="{% url "person_gallery" person.slug %}">Gallery</a></li>
+                <li {{ tab.followers }}><a href="{% url "person_followers" person.slug %}">Followers</a></li>
                 {% endcomment %}
-                <li {{ tab.members }}><a href="{% url "team_members" team.slug %}">Members</a></li>
-                {% comment %}
-                    <li {{ tab.gallery }}{{ tab.photo }}><a href="{% url "team_gallery" team.slug %}">Gallery</a></li>
-                <li {{ tab.followers }}><a href="{% url "team_followers" team.slug %}">Followers</a></li>
-                {% endcomment %}
-                {% if can_edit %}
-                    <li class="{{ tab.manage.as_class }} edit-tab pull-right"><a href="{% url "team_manage_members" team.slug %}"><i class="icon-pencil"></i> Manage</a></li>
-                {% endif %}
+                <li class="{{ tab.manage.as_class }} edit-tab pull-right"><a href="{% url "person_manage_edit" person.id %}"><i class="icon-pencil"></i> Edit</a></li>
             </ul>
         </div>
     </div>

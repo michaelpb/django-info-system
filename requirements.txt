@@ -1,2 +1,14 @@
+# Forms
+django-crispy-forms==1.6.1
+
+# Versioning
+django-reversion==2.0.8
+
+# Tagging and social
+django-taggit==0.22.1
+django-taggit-templatetags==0.4.6dev
+
+# Activity stream
+actable==0.1.2
 
 # Additional requirements go here

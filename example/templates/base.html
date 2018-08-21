@@ -1,13 +1,11 @@
 {% extends "base/empty.html" %}
 {% load i18n %}
 
-
 {% block title %}
     {% if page_title %}
         {{ page_title|capfirst }} -
     {% endif %}
 {% endblock %}
-
 
 {% block body %}
     {% block top %}
@@ -20,7 +18,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">
-                <img src="{{ STATIC_URL }}core/images/new_logo_2_2x.png" alt="Open Lab" height="38"  />
+                <img src="{{ STATIC_URL }}core/images/new_logo_2_2x.png" alt="Django Info System" height="38"  />
             </a>
         </div>
         <div class="navbar-collapse collapse">
@@ -36,7 +34,6 @@
       </div>
     </div>
     {% endblock %}
-
 
     <div class="main-wrapper">
         {% block middle %}
@@ -92,7 +89,7 @@
 
     {% block footer %}
         <footer class="sticky-footer">
-            Open Lab
+            Django Info System
             <!--[if lte IE 8]><span style="filter: FlipH; -ms-filter: "FlipH"; display: inline-block;"><![endif]-->
             <span style="-moz-transform: scaleX(-1); -o-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); display: inline-block;">
             &copy;</span>
@@ -105,10 +102,10 @@
                     <p><a 
                             class="btn btn-default btn-xs tip"
                             href="javascript:void(0);"
-                            onClick="window.open('http://webchat.freenode.net/?nick={% firstof user.username 'visitor...' %}&channels=openlab-dev&uio=Mj10cnVlJjM9ZmFsc2UmMTA9dHJ1ZSYxMT0yMjYmMTM9ZmFsc2U9b','Open Lab Dev Chat','height=400,width=450');"
+                            onClick="window.open('http://webchat.freenode.net/?nick={% firstof user.username 'visitor...' %}&channels=openlab-dev&uio=Mj10cnVlJjM9ZmFsc2UmMTA9dHJ1ZSYxMT0yMjYmMTM9ZmFsc2U9b','Django Info System Dev Chat','height=400,width=450');"
                             title="Ran into a bug? Not sure what to do? Click here to chat with us in the chat channel! (freenode#openlab-dev)"
                         >
-                        <i class="icon-comments"></i> &nbsp; Open Lab Dev Chat &nbsp;<i class="icon-external-link"></i>
+                        <i class="icon-comments"></i> &nbsp; Django Info System Dev Chat &nbsp;<i class="icon-external-link"></i>
                     </a></p>
                 </div>
             {% endcomment %}

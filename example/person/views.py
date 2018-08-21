@@ -2,8 +2,15 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
+from .forms import EditPersonForm
+
 # 1st party
-from django_info_system.generic_views import ListInfo
+from django_info_system.generic_views import (
+    ListInfo,
+    ViewOverviewInfo,
+    ViewActivityInfo,
+    ManageEditInfo,
+)
 
 # local
 from .models import Person
@@ -25,10 +32,17 @@ class Base:
 
     browse_tabs = {
             'active': (lambda qs: qs.filter(account__isnull=False)),
-            'all': False,
+            'all': (lambda qs: qs),
             None: 'all', # default
         }
 
 class PersonList(ListInfo, Base):
     breadcrumb = _('People')
+
+class PersonView(ViewOverviewInfo, Base):
+    parent_view = PersonList
+
+class PersonManageEdit(ManageEditInfo, Base):
+    parent_view = PersonView
+    form = EditPersonForm
 

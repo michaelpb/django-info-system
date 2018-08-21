@@ -7,18 +7,18 @@ from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
 
 # third party
-from django_select2 import AutoSelect2TagField
-from django_select2.widgets import Select2Widget
+#from django_select2 import AutoSelect2TagField
+#from django_select2.widgets import Select2Widget
 #from django_select2.util import JSFunction
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
 from taggit.models import Tag
 
 # first party
-from openlab.gallery.models import Photo
+#from openlab.gallery.models import Photo
 
 #from location.forms import RegionSelectField, CountrySelectField, CitySelectField
-from openlab.location.forms import AnyLocationField
+#from openlab.location.forms import AnyLocationField
 
 # local
 from .models import InfoBaseModel
